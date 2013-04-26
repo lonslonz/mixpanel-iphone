@@ -86,4 +86,14 @@
     [mixpanel identify:mixpanel.distinctId];
 }
 
+- (IBAction)takeSurvey:(id)sender
+{
+    [[Mixpanel sharedInstance].people showFakeSurvey];
+}
+
+- (IBAction)checkForSurvey:(id)sender
+{
+    [[Mixpanel sharedInstance].people checkForSurvey];
+}
+
 @end

@@ -20,7 +20,9 @@
 #import <UIKit/UIKit.h>
 
 @class    MixpanelPeople;
+//@class    MixpanelSurveyNavigationController;
 @protocol MixpanelDelegate;
+//@protocol MixpanelSurveyNavigationController;
 
 /*!
  @class
@@ -583,6 +585,22 @@
  */
 - (void)deleteUser;
 
+/*!
+ @method
+
+ @abstract
+ Checks if the current user is eligible for a survey.
+ */
+- (void)checkForSurvey;
+
+/*!
+ @method
+
+ @abstract
+ Shows a fake survey.
+ */
+- (void)showFakeSurvey;
+
 @end
 
 /*!
@@ -612,5 +630,11 @@
  @param mixpanel        Mixpanel API instance
  */
 - (BOOL)mixpanelWillFlush:(Mixpanel *)mixpanel;
+
+- (void)mixpanel:(Mixpanel *)mixpanel didReceivePermissionToConductSurvey:(UINavigationController *)surveyNavigationController;
+
+- (BOOL)mixpanelWillPromptForSurvey;
+
+- (void)mixpanelDidDismissSurvey:(Mixpanel *)mixpanel;
 
 @end

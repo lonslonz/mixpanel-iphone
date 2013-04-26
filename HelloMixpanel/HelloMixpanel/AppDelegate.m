@@ -23,7 +23,8 @@
 #import "ViewController.h"
 
 // IMPORTANT!!! replace with you api token from https://mixpanel.com/account/
-#define MIXPANEL_TOKEN @"YOUR MIXPANEL PROJECT TOKEN"
+//#define MIXPANEL_TOKEN @"YOUR MIXPANEL PROJECT TOKEN"
+#define MIXPANEL_TOKEN @"1a59f812e0366298ffad1b458e199c93"
 
 @implementation AppDelegate
 
@@ -43,6 +44,8 @@
     
     // Initialize the MixpanelAPI object
     self.mixpanel = [Mixpanel sharedInstanceWithToken:MIXPANEL_TOKEN];
+
+    self.mixpanel.delegate = self;
 
     // Set the upload interval to 20 seconds for demonstration purposes. This would be overkill for most applications.
     self.mixpanel.flushInterval = 20; // defaults to 60 seconds
@@ -132,6 +135,18 @@
 
     NSLog(@"%@ dispatched background task %u", self, self.bgTask);
 
+}
+
+#pragma mark * Surveys
+
+- (void)mixpanel:(Mixpanel *)mixpanel didReceivePermissionToConductSurvey:(UINavigationController *)surveyNav
+{
+    [self.viewController presentModalViewController:surveyNav animated:YES];
+}
+
+- (void)mixpanelDidDismissSurvey:(Mixpanel *)mixpanel
+{
+    [self.viewController dismissModalViewControllerAnimated:YES];
 }
 
 @end

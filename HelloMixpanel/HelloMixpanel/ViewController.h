@@ -18,6 +18,8 @@
 
 #import <UIKit/UIKit.h>
 
+#import "Mixpanel.h"
+
 @interface ViewController : UIViewController
 
 @end

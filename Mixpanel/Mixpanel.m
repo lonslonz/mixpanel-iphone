@@ -68,6 +68,8 @@
 @property(nonatomic,retain) NSURLConnection *peopleConnection;
 @property(nonatomic,retain) NSMutableData *eventsResponseData;
 @property(nonatomic,retain) NSMutableData *peopleResponseData;
+@property(nonatomic,retain) NSOperationQueue *requestQueue;
+@property(nonatomic,retain) NSDictionary *survey;
 
 #if __IPHONE_OS_VERSION_MIN_REQUIRED >= 40000
 @property(nonatomic,assign) UIBackgroundTaskIdentifier taskId;
@@ -75,14 +77,32 @@
 
 @end
 
-@interface MixpanelPeople ()
-
+@interface MixpanelPeople () <UIAlertViewDelegate>
 @property(nonatomic,assign) Mixpanel *mixpanel;
 @property(nonatomic,retain) NSMutableArray *unidentifiedQueue;
 @property(nonatomic,copy) NSString *distinctId;
-
 - (id)initWithMixpanel:(Mixpanel *)mixpanel;
+@end
 
+@protocol MixpanelSurveyQuestionViewControllerDelegate <NSObject>
+- (void)mixpanelSurveyQuestionViewController:(UIViewController *)questionViewController didReceiveAnswerProperties:(NSDictionary *)properties;
+@end
+
+@interface MixpanelSurveyQuestionViewController : UIViewController <UITextFieldDelegate, UITableViewDelegate, UITableViewDataSource>
+@property(nonatomic,assign) id<MixpanelSurveyQuestionViewControllerDelegate> delegate;
+@property(nonatomic,retain) NSString *prompt;
+@property(nonatomic,retain) NSString *property;
+@property(nonatomic,retain) NSArray *choices;
+@property(nonatomic,retain) UITableView *tableView;
+-(instancetype)initWithPrompt:(NSString *)prompt andChoices:(NSArray *)choices forProperty:(NSString *)property;
+@end
+
+@interface MixpanelSurveyNavigationController : UINavigationController <MixpanelSurveyQuestionViewControllerDelegate>
+@property(nonatomic,assign) Mixpanel *mixpanel;
+@property(nonatomic,retain) NSArray *questionViewControllers;
+@property(nonatomic,retain) UILabel *progressLabel;
+@property(nonatomic,retain) UIProgressView *progressView;
+- (instancetype)initWithMixpanel:(Mixpanel *)mixpanel andQuestionViewControllers:(NSArray *)questionViewControllers;
 @end
 
 @implementation Mixpanel
@@ -332,6 +352,8 @@ static Mixpanel *sharedInstance = nil;
 
         self.eventsQueue = [NSMutableArray array];
         self.peopleQueue = [NSMutableArray array];
+
+        self.requestQueue = [[[NSOperationQueue alloc] init] autorelease];
         
         [self addApplicationObservers];
         
@@ -1035,6 +1057,8 @@ static Mixpanel *sharedInstance = nil;
     self.peopleConnection = nil;
     self.eventsResponseData = nil;
     self.peopleResponseData = nil;
+    self.requestQueue = nil;
+    self.survey = nil;
     
     [super dealloc];
 }
@@ -1209,6 +1233,361 @@ static Mixpanel *sharedInstance = nil;
     self.distinctId = nil;
     self.unidentifiedQueue = nil;
     [super dealloc];
+}
+
+#pragma mark - Surveys
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    switch (buttonIndex) {
+        case 0:
+            // no thanks
+            break;
+        case 1:
+            // yes
+            [self showSurvey];
+            break;
+        case 2:
+            // maybe later
+            break;
+        default:
+            NSLog(@"%@ error got unknown button index from survey alert: %d", self, buttonIndex);
+            break;
+    }
+}
+
+- (void)checkForSurvey
+{
+    NSString *URLString = [NSString stringWithFormat:@"http://neil.dev.mixpanel.org/projects/%@/surveys/api", self.mixpanel.apiToken];
+    NSURL *URL = [NSURL URLWithString:URLString];
+    NSURLRequest *request = [NSURLRequest requestWithURL:URL];
+    NSLog(@"%@ surveys request: %@", self, request);
+    [NSURLConnection sendAsynchronousRequest:request queue:self.mixpanel.requestQueue completionHandler:^(NSURLResponse *response, NSData *data, NSError *error)
+     {
+         if (error != nil) {
+             NSLog(@"%@ surveys request error: %@", self, error);
+             return;
+         }
+         NSDictionary *survey = [NSJSONSerialization JSONObjectWithData:data options:nil error:&error];
+         if (error != nil) {
+             NSLog(@"%@ surveys json error: %@", self, error);
+             return;
+         }
+         if ([survey objectForKey:@"questions"]) {
+             self.mixpanel.survey = survey;
+             NSLog(@"%@ survey: %@", self, survey);
+             [self performSelectorOnMainThread:@selector(requestPermissionToConductSurvey) withObject:self waitUntilDone:NO];
+         } else {
+             NSLog(@"%@ no survey at this time", self);
+         }
+     }];
+}
+
+- (void)requestPermissionToConductSurvey
+{
+    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Help Us Improve"
+                                                        message:@"We're trying to make this app better for you. Would you mind taking a brief survey? It won't take more than a minute. Thanks for your support!"
+                                                       delegate:self
+                                              cancelButtonTitle:@"No, Thanks"
+                                              otherButtonTitles:@"Take Survey", @"Maybe Later", nil];
+	[alertView show];
+}
+
+- (void)showFakeSurvey
+{
+    self.mixpanel.survey = @{
+                             @"version": @0,
+                             @"questions": @[
+                                     @{
+                                         @"prompt": @"If we discontinued our service, how much would you care?",
+                                         @"property": @"Engagement",
+                                         @"choices": @[
+                                                 @"A lot",
+                                                 @"A little",
+                                                 @"Not at all",
+                                                 @"I'd prefer you didn't exist",
+                                                 [NSNull null]
+                                                 ]
+                                         },
+                                     @{
+                                         @"prompt": @"How many employees does your company have?",
+                                         @"property": @"Company Size",
+                                         @"choices": @[
+                                                 @1,
+                                                 @1.5,
+                                                 @100,
+                                                 @1000,
+                                                 @10000
+                                                 ]
+                                         },
+                                     @{
+                                         @"prompt": @"Would you recommend this app to a friend?",
+                                         @"property": @"Promoter",
+                                         @"choices": @[
+                                                 @YES,
+                                                 @NO
+                                                 ]
+                                         },
+                                     @{
+                                         @"prompt": @"Is this question too long or just long enough to be effective in getting to the exact point we were trying to get across when engaging you in as efficient a manner as possible?",
+                                         @"property": @"Promoter",
+                                         @"choices": @[
+                                                 @YES,
+                                                 @NO
+                                                 ]
+                                         }
+                                     ]
+                             };
+    [self showSurvey];
+}
+
+- (void)showSurvey
+{
+    NSMutableArray *questionViewControllers = [NSMutableArray array];
+    for (NSDictionary *question in [self.mixpanel.survey objectForKey:@"questions"]) {
+        NSString *prompt = [question objectForKey:@"prompt"];
+        NSArray *choices = [question objectForKey:@"choices"];
+        NSString *property = [question objectForKey:@"property"];
+        MixpanelSurveyQuestionViewController *controller = [[[MixpanelSurveyQuestionViewController alloc] initWithPrompt:prompt andChoices:choices forProperty:property] autorelease];
+        [questionViewControllers addObject:controller];
+    }
+    MixpanelSurveyNavigationController *surveyController = [[MixpanelSurveyNavigationController alloc] initWithMixpanel:self.mixpanel andQuestionViewControllers:questionViewControllers];
+    [self.mixpanel.delegate mixpanel:self.mixpanel didReceivePermissionToConductSurvey:surveyController];
+    [surveyController release];
+}
+
+@end
+
+@implementation MixpanelSurveyQuestionViewController
+
+-(instancetype)initWithPrompt:(NSString *)prompt andChoices:(NSArray *)choices forProperty:(NSString *)property
+{
+    if (self = [super init]) {
+        if (prompt == nil) {
+            NSLog(@"%@ error: nil survey question prompt", self);
+            return nil;
+        }
+        if (choices == nil) {
+            NSLog(@"%@ error: nil survey question choices", self);
+            return nil;
+        }
+        if (property == nil) {
+            NSLog(@"%@ error: nil survey question property", self);
+            return nil;
+        }
+        self.prompt = prompt;
+        self.choices = choices;
+        self.property = property;
+    }
+    return self;
+}
+
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+
+    self.view.backgroundColor = [UIColor colorWithRed:217/255.0f green:217/255.0f blue:217/255.0f alpha:1.0f];
+    CGFloat top = 10.0;
+    UILabel *label = [[[UILabel alloc] initWithFrame:CGRectMake(10.0, top, self.view.bounds.size.width - 20.0, 50.0)] autorelease];
+    label.text = self.prompt;
+    label.backgroundColor = [UIColor clearColor];
+    label.numberOfLines = 0;
+    label.textAlignment = UITextAlignmentCenter;
+
+    label.textColor = [UIColor darkTextColor];
+    CGFloat heightToFit = [label.text sizeWithFont:label.font constrainedToSize:CGSizeMake(label.frame.size.width, UINTMAX_MAX) lineBreakMode:label.lineBreakMode].height;
+    if (heightToFit > 50.0) {
+        label.frame = CGRectMake(label.frame.origin.x, label.frame.origin.y, label.frame.size.width, heightToFit);
+    }
+    top += label.frame.size.height + 10.0;
+    label.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+    [self.view addSubview:label];
+    UITableView *tableView = [[[UITableView alloc] initWithFrame:CGRectMake(0.0, top, self.view.bounds.size.width, self.view.bounds.size.height - top) style:UITableViewStylePlain] autorelease];
+    tableView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
+    tableView.delegate = self;
+    tableView.dataSource = self;
+    tableView.allowsSelection = YES;
+    [tableView reloadData];
+    self.tableView = tableView;
+    [self.view addSubview:tableView];
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    [self.tableView flashScrollIndicators];
+}
+
+- (NSString *)labelForValue:(id)val
+{
+    NSString *label;
+    if ([val isKindOfClass:[NSString class]]) {
+        label = val;
+    } else if ([val isKindOfClass:[NSNumber class]]) {
+        int i = [val intValue];
+        if (CFNumberGetType((CFNumberRef)val) == kCFNumberCharType && (i == 0 || i == 1)) {
+            label = i ? @"Yes" : @"No";
+        } else {
+            NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
+            [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
+            label = [formatter stringFromNumber:val];
+            [formatter release];
+        }
+    } else if ([val isKindOfClass:[NSNull class]]) {
+        label = @"None";
+    } else {
+        NSLog(@"%@ unexpected value for survey choice: %@", self, val);
+        label = [val description];
+    }
+    return label;
+}
+
+#pragma mark - UITableViewControllerDelegate methods
+
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+    return 1;
+}
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    return [self.choices count];
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    static NSString *identifier = @"MixpanelCellIdentifier";
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier];
+    if (cell == nil) {
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
+    }
+    cell.textLabel.text = [self labelForValue:[self.choices objectAtIndex:indexPath.row]];
+    return cell;
+}
+
+-(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+    cell.accessoryType = UITableViewCellAccessoryCheckmark;
+    NSDictionary *answer = [NSDictionary dictionaryWithObject:[self.choices objectAtIndex:indexPath.row] forKey:self.property];
+    [self.delegate mixpanelSurveyQuestionViewController:self didReceiveAnswerProperties:answer];
+}
+
+-(void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+    cell.accessoryType = UITableViewCellAccessoryNone;
+}
+
+@end
+
+@implementation MixpanelSurveyNavigationController
+
+- (id)initWithMixpanel:(Mixpanel *)mixpanel andQuestionViewControllers:(NSArray *)questionViewControllers
+{
+    if (self = [super initWithRootViewController:[questionViewControllers objectAtIndex:0]]) {
+        self.mixpanel = mixpanel;
+        self.questionViewControllers = questionViewControllers;
+        [self initQuestionViewControllers];
+        [self initNavigationBar];
+    }
+    return self;
+}
+
+- (void)dealloc
+{
+    self.questionViewControllers = nil;
+    self.progressView = nil;
+    self.progressLabel = nil;
+    [super dealloc];
+}
+
+- (void)initQuestionViewControllers
+{
+    for (MixpanelSurveyQuestionViewController *controller in self.questionViewControllers) {
+
+        controller.delegate = self;
+
+        if (controller == [self.questionViewControllers objectAtIndex:0]) {
+            controller.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(dismiss)];
+        }
+        if (self.questionViewControllers.count > 1) {
+            controller.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Skip" style:UIBarButtonItemStylePlain target:self action:@selector(next)];
+        }
+    }
+}
+
+- (void)initNavigationBar
+{
+    self.progressLabel = [[[UILabel alloc] initWithFrame:CGRectMake(0.0, 0.0, 150.0, 18.0)] autorelease];
+    self.progressLabel.textColor = [UIColor whiteColor];
+    self.progressLabel.font = [UIFont boldSystemFontOfSize:13.0];
+    self.progressLabel.shadowColor = [UIColor darkGrayColor];
+    self.progressLabel.shadowOffset = CGSizeMake(0.0, -1.0);
+    self.progressLabel.backgroundColor = [UIColor clearColor];
+    self.progressLabel.textAlignment = UITextAlignmentCenter;
+
+    self.progressView = [[[UIProgressView alloc] initWithProgressViewStyle:UIProgressViewStyleBar] autorelease];
+
+    [self.navigationBar addSubview:self.progressLabel];
+    [self.navigationBar addSubview:self.progressView];
+
+    [self positionProgressLabelAndView:self.interfaceOrientation];
+
+    [self updateProgress];
+}
+
+- (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
+{
+    [super willAnimateRotationToInterfaceOrientation:toInterfaceOrientation duration:duration];
+    [self positionProgressLabelAndView:toInterfaceOrientation];
+}
+
+- (void)positionProgressLabelAndView:(UIInterfaceOrientation)interfaceOrientation
+{
+    CGFloat centerX = self.navigationBar.center.x;
+    if (interfaceOrientation == UIInterfaceOrientationPortrait || interfaceOrientation == UIInterfaceOrientationPortraitUpsideDown) {
+        self.progressLabel.center = CGPointMake(centerX, 14.0);
+        self.progressView.center = CGPointMake(centerX, 28.0);
+    } else {
+        self.progressLabel.center = CGPointMake(centerX, 9.0);
+        self.progressView.center = CGPointMake(centerX, 23.0);
+    }
+}
+
+- (UIViewController *)popViewControllerAnimated:(BOOL)animated
+{
+    UIViewController *controller = [super popViewControllerAnimated:animated];
+    [self updateProgress];
+    return controller;
+}
+
+- (void)dismiss
+{
+    if (self.mixpanel.delegate && [self.mixpanel.delegate respondsToSelector:@selector(mixpanelDidDismissSurvey:)]) {
+        [self.mixpanel.delegate mixpanelDidDismissSurvey:self.mixpanel];
+    }
+}
+
+- (void)next
+{
+    if (self.viewControllers.count == self.questionViewControllers.count) {
+        // if we're on the last step, we're done, so dismiss the survey
+        [self dismiss];
+    } else {
+        UIViewController *next = [self.questionViewControllers objectAtIndex:self.viewControllers.count];
+        [self pushViewController:next animated:YES];
+        [self updateProgress];
+    }
+}
+
+- (void)updateProgress
+{
+    self.progressLabel.text = [NSString stringWithFormat:@"%d of %d", self.viewControllers.count, self.questionViewControllers.count];
+    self.progressView.progress = ((float)self.viewControllers.count) / self.questionViewControllers.count;
+}
+
+- (void)mixpanelSurveyQuestionViewController:(UIViewController *)questionViewController didReceiveAnswerProperties:(NSDictionary *)properties
+{
+    [self.mixpanel.people set:properties];
+    [self next];
 }
 
 @end
