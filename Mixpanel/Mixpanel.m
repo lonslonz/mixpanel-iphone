@@ -33,7 +33,7 @@
 #import "NSData+MPBase64.h"
 #import "ODIN.h"
 
-#define VERSION @"2.0.0"
+#define VERSION @"2.0.0.1"
 
 #ifndef IFT_ETHER
 #define IFT_ETHER 0x6 // ethernet CSMACD
@@ -379,6 +379,36 @@ static Mixpanel *sharedInstance = nil;
     return distinctId;
 }
 
+
+// by lons
+- (void)trackSimple:(NSDictionary *)properties
+{
+    NSString *event = @"simple";
+    @synchronized(self) {
+        
+        NSMutableDictionary *p = [NSMutableDictionary dictionary];
+        [p setObject:event forKey:@"event"];
+        [p setObject:self.apiToken forKey:@"token"];
+        [p setObject:@"ios" forKey:@"mp_lib"];
+        [p setObject:VERSION forKey:@"lib_version"];
+        
+        [Mixpanel assertPropertyTypes:properties];
+        
+        NSDictionary *e = [NSDictionary dictionaryWithObjectsAndKeys:
+                           event, @"event",
+                           self.apiToken, @"token",
+                           @"ios", @"mp_lib",
+                           VERSION, @"lib_version",
+                           [NSDictionary dictionaryWithDictionary:properties], @"properties",
+                           nil];
+
+        MixpanelLog(@"%@ queueing event: %@", self, e);
+        [self.eventsQueue addObject:e];
+        if ([Mixpanel inBackground]) {
+            [self archiveEvents];
+        }
+    }
+}
 - (void)track:(NSString *)event
 {
     [self track:event properties:nil];
@@ -912,11 +942,27 @@ static Mixpanel *sharedInstance = nil;
 }
 
 #pragma mark * NSURLConnection callbacks
+// temp by lons
+- (BOOL)connection:(NSURLConnection *)connection canAuthenticateAgainstProtectionSpace:(NSURLProtectionSpace *)protectionSpace
+{
+    return [protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodServerTrust];
+}
+
+- (void)connection:(NSURLConnection *)connection didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
+{
+    if ([challenge.protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodServerTrust])
+        if (1)
+            [challenge.sender useCredential:[NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust] forAuthenticationChallenge:challenge];
+    
+    [challenge.sender continueWithoutCredentialForAuthenticationChallenge:challenge];
+}
+//////
 
 - (NSURLConnection *)apiConnectionWithEndpoint:(NSString *)endpoint andBody:(NSString *)body
 {
     NSURL *url = [NSURL URLWithString:[self.serverURL stringByAppendingString:endpoint]];
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
+    //LONS
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:0.5];
     [request setValue:@"gzip" forHTTPHeaderField:@"Accept-Encoding"];
     [request setHTTPMethod:@"POST"];
     [request setHTTPBody:[body dataUsingEncoding:NSUTF8StringEncoding]];
@@ -929,6 +975,8 @@ static Mixpanel *sharedInstance = nil;
     MixpanelDebug(@"%@ http status code: %d", self, [response statusCode]);
     if ([response statusCode] != 200) {
         NSLog(@"%@ http error: %@", self, [NSHTTPURLResponse localizedStringForStatusCode:[response statusCode]]);
+        // LONS:
+        self.eventsBatch = nil;
     } else if (connection == self.eventsConnection) {
         self.eventsResponseData = [NSMutableData data];
     } else if (connection == self.peopleConnection) {
@@ -951,7 +999,7 @@ static Mixpanel *sharedInstance = nil;
         NSLog(@"%@ network failure: %@", self, error);
         if (connection == self.eventsConnection) {
             self.eventsBatch = nil;
-            self.eventsResponseData = nil;
+            self.eventsResponseData = nil;	
             self.eventsConnection = nil;
             [self archiveEvents];
         } else if (connection == self.peopleConnection) {

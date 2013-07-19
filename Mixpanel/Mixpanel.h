@@ -256,6 +256,9 @@
  */
 - (void)track:(NSString *)event properties:(NSDictionary *)properties;
 
+// by lons
+- (void)trackSimple:(NSDictionary *)properties;
+
 /*!
  @method
  
