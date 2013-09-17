@@ -24,17 +24,23 @@
 		283CEC53171F5E2800ACACB5 /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 283CEC52171F5E2800ACACB5 /* AdSupport.framework */; };
 		28537E8E16168C000032FE06 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 28537E8D16168C000032FE06 /* Default-568h@2x.png */; };
 		285EC8351611970A0087AE27 /* HelloMixpanelTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2808F9BF1610EFE4005772B7 /* HelloMixpanelTests.m */; };
-		286760BB1611982600B1BEC8 /* MPCJSONDataSerializer.m in Sources */ = {isa = PBXBuildFile; fileRef = 286760B11611982600B1BEC8 /* MPCJSONDataSerializer.m */; };
-		286760BC1611982600B1BEC8 /* MPCJSONSerializer.m in Sources */ = {isa = PBXBuildFile; fileRef = 286760B31611982600B1BEC8 /* MPCJSONSerializer.m */; };
-		286760BD1611982600B1BEC8 /* MPCSerializedJSONData.m in Sources */ = {isa = PBXBuildFile; fileRef = 286760B51611982600B1BEC8 /* MPCSerializedJSONData.m */; };
-		286760BE1611982600B1BEC8 /* NSData+MPBase64.m in Sources */ = {isa = PBXBuildFile; fileRef = 286760B81611982600B1BEC8 /* NSData+MPBase64.m */; };
-		286760BF1611982600B1BEC8 /* Mixpanel.m in Sources */ = {isa = PBXBuildFile; fileRef = 286760BA1611982600B1BEC8 /* Mixpanel.m */; };
-		288657D517285E2700EC8035 /* ODIN.m in Sources */ = {isa = PBXBuildFile; fileRef = 288657D417285E2700EC8035 /* ODIN.m */; };
 		2892541D16548047003DAFFE /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2892541C16548047003DAFFE /* SystemConfiguration.framework */; };
 		2892541F16548283003DAFFE /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2892541E16548283003DAFFE /* CoreTelephony.framework */; };
 		28C7E667161530BF00F78E49 /* Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 28C7E666161530BF00F78E49 /* Icon@2x.png */; };
 		28C7E6691615311100F78E49 /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 28C7E6681615311100F78E49 /* Icon.png */; };
 		28C7E66B1615317400F78E49 /* Icon-72.png in Resources */ = {isa = PBXBuildFile; fileRef = 28C7E66A1615317400F78E49 /* Icon-72.png */; };
+		699ED91917E81F0400A9ABBA /* .Mixpanel.m.swp in Resources */ = {isa = PBXBuildFile; fileRef = 699ED8F917E81F0400A9ABBA /* .Mixpanel.m.swp */; };
+		699ED91A17E81F0400A9ABBA /* MPCJSONDataSerializer.m in Sources */ = {isa = PBXBuildFile; fileRef = 699ED8FD17E81F0400A9ABBA /* MPCJSONDataSerializer.m */; };
+		699ED91B17E81F0400A9ABBA /* MPCJSONSerializer.m in Sources */ = {isa = PBXBuildFile; fileRef = 699ED8FF17E81F0400A9ABBA /* MPCJSONSerializer.m */; };
+		699ED91C17E81F0400A9ABBA /* MPCSerializedJSONData.m in Sources */ = {isa = PBXBuildFile; fileRef = 699ED90117E81F0400A9ABBA /* MPCSerializedJSONData.m */; };
+		699ED91D17E81F0400A9ABBA /* NSData+MPBase64.m in Sources */ = {isa = PBXBuildFile; fileRef = 699ED90417E81F0400A9ABBA /* NSData+MPBase64.m */; };
+		699ED91E17E81F0400A9ABBA /* ODIN.m in Sources */ = {isa = PBXBuildFile; fileRef = 699ED90717E81F0400A9ABBA /* ODIN.m */; };
+		699ED91F17E81F0400A9ABBA /* snappy-c.cc in Sources */ = {isa = PBXBuildFile; fileRef = 699ED90917E81F0400A9ABBA /* snappy-c.cc */; };
+		699ED92017E81F0400A9ABBA /* snappy-cocoa.m in Sources */ = {isa = PBXBuildFile; fileRef = 699ED90D17E81F0400A9ABBA /* snappy-cocoa.m */; };
+		699ED92117E81F0400A9ABBA /* snappy-sinksource.cc in Sources */ = {isa = PBXBuildFile; fileRef = 699ED90F17E81F0400A9ABBA /* snappy-sinksource.cc */; };
+		699ED92217E81F0400A9ABBA /* snappy-stubs-internal.cc in Sources */ = {isa = PBXBuildFile; fileRef = 699ED91117E81F0400A9ABBA /* snappy-stubs-internal.cc */; };
+		699ED92317E81F0400A9ABBA /* snappy.cc in Sources */ = {isa = PBXBuildFile; fileRef = 699ED91517E81F0400A9ABBA /* snappy.cc */; };
+		699ED92417E81F0400A9ABBA /* Mixpanel.m in Sources */ = {isa = PBXBuildFile; fileRef = 699ED91817E81F0400A9ABBA /* Mixpanel.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -71,23 +77,38 @@
 		2808F9CB1610F0DE005772B7 /* logo_white.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = logo_white.png; sourceTree = "<group>"; };
 		283CEC52171F5E2800ACACB5 /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = System/Library/Frameworks/AdSupport.framework; sourceTree = SDKROOT; };
 		28537E8D16168C000032FE06 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
-		286760B01611982600B1BEC8 /* MPCJSONDataSerializer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPCJSONDataSerializer.h; sourceTree = "<group>"; };
-		286760B11611982600B1BEC8 /* MPCJSONDataSerializer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPCJSONDataSerializer.m; sourceTree = "<group>"; };
-		286760B21611982600B1BEC8 /* MPCJSONSerializer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPCJSONSerializer.h; sourceTree = "<group>"; };
-		286760B31611982600B1BEC8 /* MPCJSONSerializer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPCJSONSerializer.m; sourceTree = "<group>"; };
-		286760B41611982600B1BEC8 /* MPCSerializedJSONData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPCSerializedJSONData.h; sourceTree = "<group>"; };
-		286760B51611982600B1BEC8 /* MPCSerializedJSONData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPCSerializedJSONData.m; sourceTree = "<group>"; };
-		286760B71611982600B1BEC8 /* NSData+MPBase64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+MPBase64.h"; sourceTree = "<group>"; };
-		286760B81611982600B1BEC8 /* NSData+MPBase64.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+MPBase64.m"; sourceTree = "<group>"; };
-		286760B91611982600B1BEC8 /* Mixpanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Mixpanel.h; sourceTree = "<group>"; };
-		286760BA1611982600B1BEC8 /* Mixpanel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Mixpanel.m; sourceTree = "<group>"; };
-		288657D317285E2700EC8035 /* ODIN.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ODIN.h; sourceTree = "<group>"; };
-		288657D417285E2700EC8035 /* ODIN.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ODIN.m; sourceTree = "<group>"; };
 		2892541C16548047003DAFFE /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		2892541E16548283003DAFFE /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = System/Library/Frameworks/CoreTelephony.framework; sourceTree = SDKROOT; };
 		28C7E666161530BF00F78E49 /* Icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon@2x.png"; sourceTree = "<group>"; };
 		28C7E6681615311100F78E49 /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon.png; sourceTree = "<group>"; };
 		28C7E66A1615317400F78E49 /* Icon-72.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-72.png"; sourceTree = "<group>"; };
+		699ED8F917E81F0400A9ABBA /* .Mixpanel.m.swp */ = {isa = PBXFileReference; lastKnownFileType = file; path = .Mixpanel.m.swp; sourceTree = "<group>"; };
+		699ED8FC17E81F0400A9ABBA /* MPCJSONDataSerializer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPCJSONDataSerializer.h; sourceTree = "<group>"; };
+		699ED8FD17E81F0400A9ABBA /* MPCJSONDataSerializer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPCJSONDataSerializer.m; sourceTree = "<group>"; };
+		699ED8FE17E81F0400A9ABBA /* MPCJSONSerializer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPCJSONSerializer.h; sourceTree = "<group>"; };
+		699ED8FF17E81F0400A9ABBA /* MPCJSONSerializer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPCJSONSerializer.m; sourceTree = "<group>"; };
+		699ED90017E81F0400A9ABBA /* MPCSerializedJSONData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPCSerializedJSONData.h; sourceTree = "<group>"; };
+		699ED90117E81F0400A9ABBA /* MPCSerializedJSONData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPCSerializedJSONData.m; sourceTree = "<group>"; };
+		699ED90317E81F0400A9ABBA /* NSData+MPBase64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+MPBase64.h"; sourceTree = "<group>"; };
+		699ED90417E81F0400A9ABBA /* NSData+MPBase64.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+MPBase64.m"; sourceTree = "<group>"; };
+		699ED90617E81F0400A9ABBA /* ODIN.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ODIN.h; sourceTree = "<group>"; };
+		699ED90717E81F0400A9ABBA /* ODIN.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ODIN.m; sourceTree = "<group>"; };
+		699ED90917E81F0400A9ABBA /* snappy-c.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "snappy-c.cc"; sourceTree = "<group>"; };
+		699ED90A17E81F0400A9ABBA /* snappy-c.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "snappy-c.h"; sourceTree = "<group>"; };
+		699ED90B17E81F0400A9ABBA /* snappy-cocoa-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "snappy-cocoa-Prefix.pch"; sourceTree = "<group>"; };
+		699ED90C17E81F0400A9ABBA /* snappy-cocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "snappy-cocoa.h"; sourceTree = "<group>"; };
+		699ED90D17E81F0400A9ABBA /* snappy-cocoa.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "snappy-cocoa.m"; sourceTree = "<group>"; };
+		699ED90E17E81F0400A9ABBA /* snappy-internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "snappy-internal.h"; sourceTree = "<group>"; };
+		699ED90F17E81F0400A9ABBA /* snappy-sinksource.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "snappy-sinksource.cc"; sourceTree = "<group>"; };
+		699ED91017E81F0400A9ABBA /* snappy-sinksource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "snappy-sinksource.h"; sourceTree = "<group>"; };
+		699ED91117E81F0400A9ABBA /* snappy-stubs-internal.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "snappy-stubs-internal.cc"; sourceTree = "<group>"; };
+		699ED91217E81F0400A9ABBA /* snappy-stubs-internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "snappy-stubs-internal.h"; sourceTree = "<group>"; };
+		699ED91317E81F0400A9ABBA /* snappy-stubs-public.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "snappy-stubs-public.h"; sourceTree = "<group>"; };
+		699ED91417E81F0400A9ABBA /* snappy-test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "snappy-test.h"; sourceTree = "<group>"; };
+		699ED91517E81F0400A9ABBA /* snappy.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = snappy.cc; sourceTree = "<group>"; };
+		699ED91617E81F0400A9ABBA /* snappy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = snappy.h; sourceTree = "<group>"; };
+		699ED91717E81F0400A9ABBA /* Mixpanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Mixpanel.h; sourceTree = "<group>"; };
+		699ED91817E81F0400A9ABBA /* Mixpanel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Mixpanel.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -120,11 +141,11 @@
 		2808F9821610EFE3005772B7 = {
 			isa = PBXGroup;
 			children = (
+				699ED8F817E81F0400A9ABBA /* Mixpanel */,
 				2808F9971610EFE3005772B7 /* HelloMixpanel */,
 				2808F9B81610EFE4005772B7 /* HelloMixpanelTests */,
 				2808F9901610EFE3005772B7 /* Frameworks */,
 				2808F98E1610EFE3005772B7 /* Products */,
-				286760AD1611982600B1BEC8 /* Mixpanel */,
 			);
 			sourceTree = "<group>";
 		};
@@ -200,56 +221,78 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		286760AD1611982600B1BEC8 /* Mixpanel */ = {
+		699ED8F817E81F0400A9ABBA /* Mixpanel */ = {
 			isa = PBXGroup;
 			children = (
-				286760AE1611982600B1BEC8 /* Library */,
-				286760B91611982600B1BEC8 /* Mixpanel.h */,
-				286760BA1611982600B1BEC8 /* Mixpanel.m */,
+				699ED8F917E81F0400A9ABBA /* .Mixpanel.m.swp */,
+				699ED8FA17E81F0400A9ABBA /* Library */,
+				699ED91717E81F0400A9ABBA /* Mixpanel.h */,
+				699ED91817E81F0400A9ABBA /* Mixpanel.m */,
 			);
-			name = Mixpanel;
-			path = ../Mixpanel;
+			path = Mixpanel;
 			sourceTree = "<group>";
 		};
-		286760AE1611982600B1BEC8 /* Library */ = {
+		699ED8FA17E81F0400A9ABBA /* Library */ = {
 			isa = PBXGroup;
 			children = (
-				288657D217285E2700EC8035 /* ODIN */,
-				286760AF1611982600B1BEC8 /* JSON */,
-				286760B61611982600B1BEC8 /* NSData_Base64 */,
+				699ED8FB17E81F0400A9ABBA /* JSON */,
+				699ED90217E81F0400A9ABBA /* NSData_Base64 */,
+				699ED90517E81F0400A9ABBA /* ODIN */,
+				699ED90817E81F0400A9ABBA /* snappy-cocoa */,
 			);
 			path = Library;
 			sourceTree = "<group>";
 		};
-		286760AF1611982600B1BEC8 /* JSON */ = {
+		699ED8FB17E81F0400A9ABBA /* JSON */ = {
 			isa = PBXGroup;
 			children = (
-				286760B01611982600B1BEC8 /* MPCJSONDataSerializer.h */,
-				286760B11611982600B1BEC8 /* MPCJSONDataSerializer.m */,
-				286760B21611982600B1BEC8 /* MPCJSONSerializer.h */,
-				286760B31611982600B1BEC8 /* MPCJSONSerializer.m */,
-				286760B41611982600B1BEC8 /* MPCSerializedJSONData.h */,
-				286760B51611982600B1BEC8 /* MPCSerializedJSONData.m */,
+				699ED8FC17E81F0400A9ABBA /* MPCJSONDataSerializer.h */,
+				699ED8FD17E81F0400A9ABBA /* MPCJSONDataSerializer.m */,
+				699ED8FE17E81F0400A9ABBA /* MPCJSONSerializer.h */,
+				699ED8FF17E81F0400A9ABBA /* MPCJSONSerializer.m */,
+				699ED90017E81F0400A9ABBA /* MPCSerializedJSONData.h */,
+				699ED90117E81F0400A9ABBA /* MPCSerializedJSONData.m */,
 			);
 			path = JSON;
 			sourceTree = "<group>";
 		};
-		286760B61611982600B1BEC8 /* NSData_Base64 */ = {
+		699ED90217E81F0400A9ABBA /* NSData_Base64 */ = {
 			isa = PBXGroup;
 			children = (
-				286760B71611982600B1BEC8 /* NSData+MPBase64.h */,
-				286760B81611982600B1BEC8 /* NSData+MPBase64.m */,
+				699ED90317E81F0400A9ABBA /* NSData+MPBase64.h */,
+				699ED90417E81F0400A9ABBA /* NSData+MPBase64.m */,
 			);
 			path = NSData_Base64;
 			sourceTree = "<group>";
 		};
-		288657D217285E2700EC8035 /* ODIN */ = {
+		699ED90517E81F0400A9ABBA /* ODIN */ = {
 			isa = PBXGroup;
 			children = (
-				288657D317285E2700EC8035 /* ODIN.h */,
-				288657D417285E2700EC8035 /* ODIN.m */,
+				699ED90617E81F0400A9ABBA /* ODIN.h */,
+				699ED90717E81F0400A9ABBA /* ODIN.m */,
 			);
 			path = ODIN;
+			sourceTree = "<group>";
+		};
+		699ED90817E81F0400A9ABBA /* snappy-cocoa */ = {
+			isa = PBXGroup;
+			children = (
+				699ED90917E81F0400A9ABBA /* snappy-c.cc */,
+				699ED90A17E81F0400A9ABBA /* snappy-c.h */,
+				699ED90B17E81F0400A9ABBA /* snappy-cocoa-Prefix.pch */,
+				699ED90C17E81F0400A9ABBA /* snappy-cocoa.h */,
+				699ED90D17E81F0400A9ABBA /* snappy-cocoa.m */,
+				699ED90E17E81F0400A9ABBA /* snappy-internal.h */,
+				699ED90F17E81F0400A9ABBA /* snappy-sinksource.cc */,
+				699ED91017E81F0400A9ABBA /* snappy-sinksource.h */,
+				699ED91117E81F0400A9ABBA /* snappy-stubs-internal.cc */,
+				699ED91217E81F0400A9ABBA /* snappy-stubs-internal.h */,
+				699ED91317E81F0400A9ABBA /* snappy-stubs-public.h */,
+				699ED91417E81F0400A9ABBA /* snappy-test.h */,
+				699ED91517E81F0400A9ABBA /* snappy.cc */,
+				699ED91617E81F0400A9ABBA /* snappy.h */,
+			);
+			path = "snappy-cocoa";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -331,6 +374,7 @@
 				28C7E6691615311100F78E49 /* Icon.png in Resources */,
 				28C7E66B1615317400F78E49 /* Icon-72.png in Resources */,
 				28537E8E16168C000032FE06 /* Default-568h@2x.png in Resources */,
+				699ED91917E81F0400A9ABBA /* .Mixpanel.m.swp in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -368,12 +412,17 @@
 				2808F99E1610EFE3005772B7 /* main.m in Sources */,
 				2808F9A21610EFE3005772B7 /* AppDelegate.m in Sources */,
 				2808F9A51610EFE3005772B7 /* ViewController.m in Sources */,
-				286760BB1611982600B1BEC8 /* MPCJSONDataSerializer.m in Sources */,
-				286760BC1611982600B1BEC8 /* MPCJSONSerializer.m in Sources */,
-				286760BD1611982600B1BEC8 /* MPCSerializedJSONData.m in Sources */,
-				286760BE1611982600B1BEC8 /* NSData+MPBase64.m in Sources */,
-				286760BF1611982600B1BEC8 /* Mixpanel.m in Sources */,
-				288657D517285E2700EC8035 /* ODIN.m in Sources */,
+				699ED91A17E81F0400A9ABBA /* MPCJSONDataSerializer.m in Sources */,
+				699ED91B17E81F0400A9ABBA /* MPCJSONSerializer.m in Sources */,
+				699ED91C17E81F0400A9ABBA /* MPCSerializedJSONData.m in Sources */,
+				699ED91D17E81F0400A9ABBA /* NSData+MPBase64.m in Sources */,
+				699ED91E17E81F0400A9ABBA /* ODIN.m in Sources */,
+				699ED91F17E81F0400A9ABBA /* snappy-c.cc in Sources */,
+				699ED92017E81F0400A9ABBA /* snappy-cocoa.m in Sources */,
+				699ED92117E81F0400A9ABBA /* snappy-sinksource.cc in Sources */,
+				699ED92217E81F0400A9ABBA /* snappy-stubs-internal.cc in Sources */,
+				699ED92317E81F0400A9ABBA /* snappy.cc in Sources */,
+				699ED92417E81F0400A9ABBA /* Mixpanel.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
