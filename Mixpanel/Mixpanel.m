@@ -410,6 +410,8 @@ static Mixpanel *sharedInstance = nil;
         if ([Mixpanel inBackground]) {
             [self archiveEvents];
         }
+
+        [dateFormatter release];
     }
 }
 
