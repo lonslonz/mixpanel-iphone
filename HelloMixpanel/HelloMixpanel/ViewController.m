@@ -63,18 +63,11 @@
     Mixpanel *mixpanel = [Mixpanel sharedInstance];
 
     
-//    [mixpanel track:@"Player Create" properties:[NSDictionary dictionaryWithObjectsAndKeys:
-//                                                 [self.genderControl titleForSegmentAtIndex:self.genderControl.selectedSegmentIndex], @"gender",
-//                                                 [self.weaponControl titleForSegmentAtIndex:self.weaponControl.selectedSegmentIndex], @"weapon",
-//                                                 nil]];
-//    
-//    [mixpanel trackSimple:[NSDictionary dictionaryWithObjectsAndKeys:
-//                                            @"jhkim_ios", @"name",
-//                                            @"mixpanel_test_4_notime", @"app_id",
-//                                            nil]];
-
-//      [mixpanel track:[NSDictionary dictionaryWithObjectsAndKeys:@"hi",@"test",nil]];
-        [mixpanel track:@"iphone click sample event"];
+    [mixpanel track:@"purchase" properties:[NSDictionary dictionaryWithObjectsAndKeys:
+                                                 @"junghyun", @"userId",
+                                                 @"a01jdksa904812df", @"purchaseId",
+                                                 @"30000", @"price",
+                                                 nil]];
     
 }
 
