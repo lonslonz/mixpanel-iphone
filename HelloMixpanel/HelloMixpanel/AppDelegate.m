@@ -23,7 +23,7 @@
 #import "ViewController.h"
 
 // IMPORTANT!!! replace with you api token from https://mixpanel.com/account/
-#define MIXPANEL_TOKEN @"ce131246df8ea4744048b8d399e93ef27b7ed74c"
+#define MIXPANEL_TOKEN @"9e9b36b3ec8bdce6de5d4b591b7fb6ff731d04e"
 
 @implementation AppDelegate
 
@@ -42,17 +42,18 @@
     // Override point for customization after application launch.
     
     // Initialize the MixpanelAPI object
-    self.mixpanel = [Mixpanel sharedInstanceWithToken:MIXPANEL_TOKEN];
+    //self.mixpanel = [Mixpanel sharedInstanceWithToken:MIXPANEL_TOKEN];
+    self.mixpanel = [Mixpanel sharedInstanceWithToken:MIXPANEL_TOKEN andUseDevServer:true];
 
     // Set the upload interval to 20 seconds for demonstration purposes. This would be overkill for most applications.
-    self.mixpanel.flushInterval = 20; // defaults to 60 seconds
+    //self.mixpanel.flushInterval = 20; // defaults to 60 seconds
 
     // Name a user in Mixpanel Streams
     //self.mixpanel.nameTag = @"Walter Sobchak";
     
     // Set some super properties, which will be added to every tracked event
     //[self.mixpanel registerSuperProperties:[NSDictionary dictionaryWithObjectsAndKeys:@"Premium", @"Plan", nil]];
-    self.mixpanel.serverURL = @"https://rake.skplanet.com:8443/log";
+    //self.mixpanel.serverURL = @"https://rake.skplanet.com:8443/log";
     
     self.viewController = [[[ViewController alloc] initWithNibName:@"ViewController" bundle:nil] autorelease];
     self.window.rootViewController = self.viewController;

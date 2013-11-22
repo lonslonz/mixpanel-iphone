@@ -26,7 +26,7 @@
 //@property(nonatomic, retain) IBOutlet UISegmentedControl *weaponControl;
 
 - (IBAction)trackEvent:(id)sender;
-- (IBAction)sendPeopleRecord:(id)sender;
+//- (IBAction)sendPeopleRecord:(id)sender;
 
 @end
 
@@ -61,16 +61,20 @@
 - (IBAction)trackEvent:(id)sender
 {
     Mixpanel *mixpanel = [Mixpanel sharedInstance];
+
     
 //    [mixpanel track:@"Player Create" properties:[NSDictionary dictionaryWithObjectsAndKeys:
 //                                                 [self.genderControl titleForSegmentAtIndex:self.genderControl.selectedSegmentIndex], @"gender",
 //                                                 [self.weaponControl titleForSegmentAtIndex:self.weaponControl.selectedSegmentIndex], @"weapon",
 //                                                 nil]];
-    
-    [mixpanel trackSimple:[NSDictionary dictionaryWithObjectsAndKeys:
-                                            @"jhkim_ios", @"name",
-                                            @"mixpanel_test_4_notime", @"app_id",
-                                            nil]];
+//    
+//    [mixpanel trackSimple:[NSDictionary dictionaryWithObjectsAndKeys:
+//                                            @"jhkim_ios", @"name",
+//                                            @"mixpanel_test_4_notime", @"app_id",
+//                                            nil]];
+
+//      [mixpanel track:[NSDictionary dictionaryWithObjectsAndKeys:@"hi",@"test",nil]];
+        [mixpanel track:@"iphone click sample event"];
     
 }
 

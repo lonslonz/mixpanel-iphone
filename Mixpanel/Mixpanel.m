@@ -34,7 +34,8 @@
 #import "ODIN.h"
 
 #define VERSION @"2.0.0.1"
-#define RAKE_VERSION @"0.3"
+#define RAKE_VERSION @"0.4.1"
+#define CLIENT_VERSION @"1.0"
 
 
 #ifndef IFT_ETHER
@@ -52,6 +53,9 @@
 #else
 #define MixpanelDebug(...)
 #endif
+
+#define AS(A,B)    [(A) stringByAppendingString:(B)]
+
 
 @interface Mixpanel ()
 
@@ -99,35 +103,50 @@ static Mixpanel *sharedInstance = nil;
 
     UIDevice *device = [UIDevice currentDevice];
 
-    [properties setValue:@"iphone" forKey:@"mp_lib"];
-    [properties setValue:VERSION forKey:@"$lib_version"];
+    [properties setValue:@"iphone" forKey:@"rakeLib"];
+    [properties setValue:[NSString stringWithFormat:@"r%@_c%@",RAKE_VERSION,CLIENT_VERSION] forKey:@"rakeLibVersion"];
 
-    [properties setValue:[[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleVersion"] forKey:@"$app_version"];
-    [properties setValue:[[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"] forKey:@"$app_release"];
+    [properties setValue:[[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleVersion"] forKey:@"appVersion"];
+//    [properties setValue:[[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"] forKey:@"appRelease"];
 
-    [properties setValue:@"Apple" forKey:@"$manufacturer"];
-    [properties setValue:[device systemName] forKey:@"$os"];
-    [properties setValue:[device systemVersion] forKey:@"$os_version"];
-    [properties setValue:[Mixpanel deviceModel] forKey:@"$model"];
-    [properties setValue:[Mixpanel deviceModel] forKey:@"mp_device_model"]; // legacy
+//    [properties setValue:@"iphone" forKey:@"brand"];
+    [properties setValue:@"Apple" forKey:@"manufacturer"];
+    [properties setValue:[device systemName] forKey:@"osName"];
+    [properties setValue:[device systemVersion] forKey:@"osVersion"];
+    [properties setValue:[Mixpanel deviceModel] forKey:@"deviceModel"];
 
     CGSize size = [UIScreen mainScreen].bounds.size;
-    [properties setValue:[NSNumber numberWithInt:(int)size.height] forKey:@"$screen_height"];
-    [properties setValue:[NSNumber numberWithInt:(int)size.width] forKey:@"$screen_width"];
-
-    [properties setValue:[NSNumber numberWithBool:[Mixpanel wifiAvailable]] forKey:@"$wifi"];
+    [properties setValue:[NSNumber numberWithInt:(int)size.height] forKey:@"screenHeight"];
+    [properties setValue:[NSNumber numberWithInt:(int)size.width] forKey:@"screenWidth"];
+    
+    
+    [properties setValue:[NSString stringWithFormat:@"%d*%d",(int)size.width, (int)size.height] forKey:@"resolution"];
+    
+    [properties setValue:[[NSLocale preferredLanguages] objectAtIndex:0] forKey:@"language"];
+    
+    if ([Mixpanel wifiAvailable]) {
+        [properties setValue:@"WIFI" forKey:@"networkType"];
+    }else{
+        [properties setValue:@"NOT WIFI" forKey:@"networkType"];
+    }
 
     CTTelephonyNetworkInfo *networkInfo = [[CTTelephonyNetworkInfo alloc] init];
     CTCarrier *carrier = [networkInfo subscriberCellularProvider];
     [networkInfo release];
 
     if (carrier.carrierName.length) {
-        [properties setValue:carrier.carrierName forKey:@"$carrier"];
+        [properties setValue:carrier.carrierName forKey:@"carrierName"];
+    }else{
+        [properties setValue:@"UNKNOWN" forKey:@"carrierName"];
     }
 
     if (NSClassFromString(@"ASIdentifierManager")) {
-        [properties setValue:ASIdentifierManager.sharedManager.advertisingIdentifier.UUIDString forKey:@"$ios_ifa"];
+        [properties setValue:ASIdentifierManager.sharedManager.advertisingIdentifier.UUIDString forKey:@"deviceId"];
+    }else{
+        [properties setValue:@"UNKNOWN" forKey:@"deviceId"];
     }
+    
+    [properties setValue:@"false" forKey:@"hasNfc"];
 
     return [NSDictionary dictionaryWithDictionary:properties];
 }
@@ -235,6 +254,7 @@ static Mixpanel *sharedInstance = nil;
             } else {
                 stringKey = [NSString stringWithString:key];
             }
+            MixpanelLog(@"%@ key: %@", self, key);
             id v = [Mixpanel JSONSerializableObjectForObject:[obj objectForKey:key]];
             [d setObject:v forKey:stringKey];
         }
@@ -302,6 +322,21 @@ static Mixpanel *sharedInstance = nil;
     }
 }
 
++ (instancetype)sharedInstanceWithToken:(NSString *)apiToken andUseDevServer:(BOOL)isDevServer
+{
+    @synchronized(self) {
+        if (sharedInstance == nil) {
+            sharedInstance = [[super alloc] initWithToken:apiToken andFlushInterval:60];
+            if(isDevServer){
+                [sharedInstance setServerURL:@"http://1.234.62.198:7100/log/"];
+            }else{
+                [sharedInstance setServerURL:@"https://rake.skplanet.com:8443/log/"];
+            }
+        }
+        return sharedInstance;
+    }
+}
+
 + (instancetype)sharedInstance
 {
     @synchronized(self) {
@@ -327,7 +362,7 @@ static Mixpanel *sharedInstance = nil;
         self.flushInterval = flushInterval;
         self.flushOnBackground = YES;
         self.showNetworkActivityIndicator = YES;
-        self.serverURL = @"https://api.mixpanel.com";
+        self.serverURL = @"https://rake.skplanet.com:8443/log/";
         
         self.distinctId = [self defaultDistinctId];
         self.superProperties = [NSMutableDictionary dictionary];
@@ -352,7 +387,7 @@ static Mixpanel *sharedInstance = nil;
         self.people.distinctId = distinctId;
         if (distinctId != nil && distinctId.length != 0 && self.people.unidentifiedQueue.count > 0) {
             for (NSMutableDictionary *r in self.people.unidentifiedQueue) {
-                [r setObject:distinctId forKey:@"$distinct_id"];
+                [r setObject:distinctId forKey:@"distinct_id"];
                 [self.peopleQueue addObject:r];
             }
             [self.people.unidentifiedQueue removeAllObjects];
@@ -382,40 +417,6 @@ static Mixpanel *sharedInstance = nil;
 }
 
 
-// by lons
-- (void)trackSimple:(NSDictionary *)properties
-{
-    NSString *event = @"trackSimple";
-    @synchronized(self) {        
-
-        NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-        [dateFormatter setDateFormat:@"yyyyMMddHHmmssSSS"];
-        [dateFormatter setTimeZone:[NSTimeZone timeZoneWithName:@"Asia/Seoul"]];
-        NSString *timeStamp = [dateFormatter stringFromDate:[NSDate date]];
-        
-        [Mixpanel assertPropertyTypes:properties];
-        NSMutableDictionary *p = [NSMutableDictionary dictionaryWithDictionary:properties];
-        [p setObject:@"ios" forKey:@"mp_lib"];
-        [p setObject: [NSString stringWithFormat: @"%@_rake_%@",VERSION,RAKE_VERSION] forKey:@"lib_version"];
-        
-        NSDictionary *e = [NSDictionary dictionaryWithObjectsAndKeys:
-                           event, @"event",
-                           self.apiToken, @"token",
-                           timeStamp, @"timeStamp",
-                           [NSDictionary dictionaryWithDictionary:p], @"properties",
-                           nil];
-
-        MixpanelLog(@"%@ [trackSimple] queueing event: %@", self, e);
-        [self.eventsQueue addObject:e];
-        if ([Mixpanel inBackground]) {
-            [self archiveEvents];
-        }
-
-        [dateFormatter release];
-    }
-}
-
-
 - (void)track:(NSString *)event
 {
     [self track:event properties:nil];
@@ -428,16 +429,29 @@ static Mixpanel *sharedInstance = nil;
             NSLog(@"%@ mixpanel track called with empty event parameter. using 'mp_event'", self);
             event = @"mp_event";
         }
+        
+        
+        NSDate* now = [NSDate date];
+        NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+        [dateFormatter setDateFormat:@"yyyyMMddHHmmssSSS"];
+        [dateFormatter setTimeZone:[NSTimeZone timeZoneWithName:@"Asia/Seoul"]];
+        //NSString *baseTime = [dateFormatter stringFromDate:now];
+        
+        NSDateFormatter *localDateFormatter = [[NSDateFormatter alloc] init];
+        [localDateFormatter setDateFormat:@"yyyyMMddHHmmssSSS"];
+        //NSString *localTime = [localDateFormatter stringFromDate:now];
+        
+        
         NSMutableDictionary *p = [NSMutableDictionary dictionary];
         [p addEntriesFromDictionary:[Mixpanel deviceInfoProperties]];
-        [p setObject:self.apiToken forKey:@"token"];
-        [p setObject:[NSNumber numberWithLong:(long)[[NSDate date] timeIntervalSince1970]] forKey:@"time"];
-        if (self.nameTag) {
-            [p setObject:self.nameTag forKey:@"mp_name_tag"];
-        }
-        if (self.distinctId) {
-            [p setObject:self.distinctId forKey:@"distinct_id"];
-        }
+
+//        if (self.nameTag) {
+//            [p setObject:self.nameTag forKey:@"mp_name_tag"];
+//        }
+//        if (self.distinctId) {
+//            [p setObject:self.distinctId forKey:@"distinct_id"];
+//        }
+        
         [p addEntriesFromDictionary:self.superProperties];
         if (properties) {
             [p addEntriesFromDictionary:properties];
@@ -445,12 +459,27 @@ static Mixpanel *sharedInstance = nil;
 
         [Mixpanel assertPropertyTypes:properties];
 
-        NSDictionary *e = [NSDictionary dictionaryWithObjectsAndKeys:event, @"event", [NSDictionary dictionaryWithDictionary:p], @"properties", nil];
+        NSDictionary *e = [NSDictionary dictionaryWithObjectsAndKeys:
+                           event, @"event",
+                           self.apiToken, @"token",
+                           [dateFormatter stringFromDate:now], @"baseTime",
+                           [localDateFormatter stringFromDate:now], @"localTime",
+                           [NSDictionary dictionaryWithDictionary:p], @"properties",
+                           nil];
+        
+        
         MixpanelLog(@"%@ queueing event: %@", self, e);
         [self.eventsQueue addObject:e];
         if ([Mixpanel inBackground]) {
             [self archiveEvents];
         }
+        
+        [dateFormatter release];
+        [localDateFormatter release];
+//        [baseTime release];
+//        [localTime release];
+//        [now release];
+        
     }
 }
 
@@ -1093,7 +1122,7 @@ static Mixpanel *sharedInstance = nil;
     [properties setValue:[[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleVersion"] forKey:@"$ios_app_version"];
     [properties setValue:[[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"] forKey:@"$ios_app_release"];
     if (NSClassFromString(@"ASIdentifierManager")) {
-        [properties setValue:ASIdentifierManager.sharedManager.advertisingIdentifier.UUIDString forKey:@"$ios_ifa"];
+        [properties setValue:ASIdentifierManager.sharedManager.advertisingIdentifier.UUIDString forKey:@"$  "];
     }
     return [NSDictionary dictionaryWithDictionary:properties];
 }

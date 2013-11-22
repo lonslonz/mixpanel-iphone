@@ -171,6 +171,7 @@
  @param apiToken        your project token
  */
 + (instancetype)sharedInstanceWithToken:(NSString *)apiToken;
++ (instancetype)sharedInstanceWithToken:(NSString *)apiToken andUseDevServer:(BOOL)isDevServer;
 
 /*!
  @method
@@ -257,7 +258,7 @@
 - (void)track:(NSString *)event properties:(NSDictionary *)properties;
 
 // by lons
-- (void)trackSimple:(NSDictionary *)properties;
+//- (void)trackSimple:(NSDictionary *)properties;
 
 /*!
  @method
