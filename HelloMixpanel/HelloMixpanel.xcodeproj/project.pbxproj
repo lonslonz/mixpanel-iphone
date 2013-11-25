@@ -29,6 +29,7 @@
 		28C7E667161530BF00F78E49 /* Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 28C7E666161530BF00F78E49 /* Icon@2x.png */; };
 		28C7E6691615311100F78E49 /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 28C7E6681615311100F78E49 /* Icon.png */; };
 		28C7E66B1615317400F78E49 /* Icon-72.png in Resources */ = {isa = PBXBuildFile; fileRef = 28C7E66A1615317400F78E49 /* Icon-72.png */; };
+		6936EA1218432D0900BEE431 /* StyleTagShuttle.m in Sources */ = {isa = PBXBuildFile; fileRef = 6936EA1118432D0900BEE431 /* StyleTagShuttle.m */; };
 		699ED91917E81F0400A9ABBA /* .Mixpanel.m.swp in Resources */ = {isa = PBXBuildFile; fileRef = 699ED8F917E81F0400A9ABBA /* .Mixpanel.m.swp */; };
 		699ED91A17E81F0400A9ABBA /* MPCJSONDataSerializer.m in Sources */ = {isa = PBXBuildFile; fileRef = 699ED8FD17E81F0400A9ABBA /* MPCJSONDataSerializer.m */; };
 		699ED91B17E81F0400A9ABBA /* MPCJSONSerializer.m in Sources */ = {isa = PBXBuildFile; fileRef = 699ED8FF17E81F0400A9ABBA /* MPCJSONSerializer.m */; };
@@ -82,6 +83,8 @@
 		28C7E666161530BF00F78E49 /* Icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon@2x.png"; sourceTree = "<group>"; };
 		28C7E6681615311100F78E49 /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon.png; sourceTree = "<group>"; };
 		28C7E66A1615317400F78E49 /* Icon-72.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-72.png"; sourceTree = "<group>"; };
+		6936EA1018432D0900BEE431 /* StyleTagShuttle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StyleTagShuttle.h; sourceTree = "<group>"; };
+		6936EA1118432D0900BEE431 /* StyleTagShuttle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StyleTagShuttle.m; sourceTree = "<group>"; };
 		699ED8F917E81F0400A9ABBA /* .Mixpanel.m.swp */ = {isa = PBXFileReference; lastKnownFileType = file; path = .Mixpanel.m.swp; sourceTree = "<group>"; };
 		699ED8FC17E81F0400A9ABBA /* MPCJSONDataSerializer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPCJSONDataSerializer.h; sourceTree = "<group>"; };
 		699ED8FD17E81F0400A9ABBA /* MPCJSONDataSerializer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPCJSONDataSerializer.m; sourceTree = "<group>"; };
@@ -141,6 +144,7 @@
 		2808F9821610EFE3005772B7 = {
 			isa = PBXGroup;
 			children = (
+				6936EA0F18432CE700BEE431 /* SentinelShuttle */,
 				699ED8F817E81F0400A9ABBA /* Mixpanel */,
 				2808F9971610EFE3005772B7 /* HelloMixpanel */,
 				2808F9B81610EFE4005772B7 /* HelloMixpanelTests */,
@@ -219,6 +223,15 @@
 				2808F9BB1610EFE4005772B7 /* InfoPlist.strings */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		6936EA0F18432CE700BEE431 /* SentinelShuttle */ = {
+			isa = PBXGroup;
+			children = (
+				6936EA1018432D0900BEE431 /* StyleTagShuttle.h */,
+				6936EA1118432D0900BEE431 /* StyleTagShuttle.m */,
+			);
+			name = SentinelShuttle;
 			sourceTree = "<group>";
 		};
 		699ED8F817E81F0400A9ABBA /* Mixpanel */ = {
@@ -422,6 +435,7 @@
 				699ED92117E81F0400A9ABBA /* snappy-sinksource.cc in Sources */,
 				699ED92217E81F0400A9ABBA /* snappy-stubs-internal.cc in Sources */,
 				699ED92317E81F0400A9ABBA /* snappy.cc in Sources */,
+				6936EA1218432D0900BEE431 /* StyleTagShuttle.m in Sources */,
 				699ED92417E81F0400A9ABBA /* Mixpanel.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

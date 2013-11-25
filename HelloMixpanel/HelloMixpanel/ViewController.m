@@ -17,6 +17,7 @@
 // limitations under the License.
 
 #import "Mixpanel.h"
+#import "StyleTagShuttle.h"
 
 #import "ViewController.h"
 
@@ -63,12 +64,15 @@
     Mixpanel *mixpanel = [Mixpanel sharedInstance];
 
     
+    //StyleTagShuttle* shuttle = [[StyleTagShuttle init] alloc];
+    
     [mixpanel track:@"purchase" properties:[NSDictionary dictionaryWithObjectsAndKeys:
                                                  @"junghyun", @"userId",
                                                  @"a01jdksa904812df", @"purchaseId",
                                                  @"30000", @"price",
                                                  nil]];
     
+    //[shuttle release];
 }
 
 - (IBAction)flushEvent:(id)sender

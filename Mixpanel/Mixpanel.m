@@ -122,7 +122,7 @@ static Mixpanel *sharedInstance = nil;
     
     [properties setValue:[NSString stringWithFormat:@"%d*%d",(int)size.width, (int)size.height] forKey:@"resolution"];
     
-    [properties setValue:[[NSLocale preferredLanguages] objectAtIndex:0] forKey:@"language"];
+    [properties setValue:[[NSLocale preferredLanguages] objectAtIndex:0] forKey:@"languageCode"];
     
     if ([Mixpanel wifiAvailable]) {
         [properties setValue:@"WIFI" forKey:@"networkType"];
