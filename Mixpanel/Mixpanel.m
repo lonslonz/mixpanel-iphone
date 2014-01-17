@@ -34,8 +34,8 @@
 #import "ODIN.h"
 
 #define VERSION @"2.0.0.1"
-#define RAKE_VERSION @"0.4.1"
-#define CLIENT_VERSION @"1.0"
+#define RAKE_VERSION @"0.5.0"
+#define CLIENT_VERSION @"1.2"
 
 
 #ifndef IFT_ETHER
@@ -328,7 +328,7 @@ static Mixpanel *sharedInstance = nil;
         if (sharedInstance == nil) {
             sharedInstance = [[super alloc] initWithToken:apiToken andFlushInterval:60];
             if(isDevServer){
-                [sharedInstance setServerURL:@"http://1.234.62.198:7100/log/"];
+                [sharedInstance setServerURL:@"http://dev.rake.skplanet.com:8000/log/"];
             }else{
                 [sharedInstance setServerURL:@"https://rake.skplanet.com:8443/log/"];
             }
