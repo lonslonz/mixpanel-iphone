@@ -35,7 +35,7 @@
 
 #define VERSION @"2.0.0.1"
 #define RAKE_VERSION @"0.5.0"
-#define CLIENT_VERSION @"1.2"
+#define CLIENT_VERSION @"1.5"
 
 
 #ifndef IFT_ETHER
@@ -417,50 +417,35 @@ static Mixpanel *sharedInstance = nil;
 }
 
 
-- (void)track:(NSString *)event
-{
-    [self track:event properties:nil];
-}
-
-- (void)track:(NSString *)event properties:(NSDictionary *)properties
+- (void)track:(NSDictionary *)properties
 {
     @synchronized(self) {
-        if (event == nil || [event length] == 0) {
-            NSLog(@"%@ mixpanel track called with empty event parameter. using 'mp_event'", self);
-            event = @"mp_event";
-        }
         
         
         NSDate* now = [NSDate date];
         NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
         [dateFormatter setDateFormat:@"yyyyMMddHHmmssSSS"];
         [dateFormatter setTimeZone:[NSTimeZone timeZoneWithName:@"Asia/Seoul"]];
-        //NSString *baseTime = [dateFormatter stringFromDate:now];
         
         NSDateFormatter *localDateFormatter = [[NSDateFormatter alloc] init];
         [localDateFormatter setDateFormat:@"yyyyMMddHHmmssSSS"];
-        //NSString *localTime = [localDateFormatter stringFromDate:now];
         
         
         NSMutableDictionary *p = [NSMutableDictionary dictionary];
         [p addEntriesFromDictionary:[Mixpanel deviceInfoProperties]];
-
-//        if (self.nameTag) {
-//            [p setObject:self.nameTag forKey:@"mp_name_tag"];
-//        }
-//        if (self.distinctId) {
-//            [p setObject:self.distinctId forKey:@"distinct_id"];
-//        }
         
-        [p addEntriesFromDictionary:self.superProperties];
+        //[p addEntriesFromDictionary:self.superProperties];
         if (properties) {
             [p addEntriesFromDictionary:properties];
         }
+        [p addEntriesFromDictionary:[NSDictionary dictionaryWithObjectsAndKeys:
+                           [dateFormatter stringFromDate:now], @"baseTime",
+                           [localDateFormatter stringFromDate:now], @"localTime",
+                           nil]];
 
         [Mixpanel assertPropertyTypes:properties];
 
         NSDictionary *e = [NSDictionary dictionaryWithObjectsAndKeys:
-                           event, @"event",
                            self.apiToken, @"token",
                            [dateFormatter stringFromDate:now], @"baseTime",
                            [localDateFormatter stringFromDate:now], @"localTime",
@@ -476,10 +461,6 @@ static Mixpanel *sharedInstance = nil;
         
         [dateFormatter release];
         [localDateFormatter release];
-//        [baseTime release];
-//        [localTime release];
-//        [now release];
-        
     }
 }
 

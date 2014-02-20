@@ -233,16 +233,6 @@
  @method
  
  @abstract
- Tracks an event.
- 
- @param event           event name
- */
-- (void)track:(NSString *)event;
-
-/*!
- @method
- 
- @abstract
  Tracks an event with properties.
  
  @discussion
@@ -252,13 +242,10 @@
  <code>NSArray</code>, <code>NSDictionary</code>, <code>NSDate</code> or
  <code>NSURL</code> objects.
  
- @param event           event name
  @param properties      properties dictionary
  */
-- (void)track:(NSString *)event properties:(NSDictionary *)properties;
+- (void)track:(NSDictionary *)properties;
 
-// by lons
-//- (void)trackSimple:(NSDictionary *)properties;
 
 /*!
  @method
