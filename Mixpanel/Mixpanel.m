@@ -35,7 +35,7 @@
 
 #define VERSION @"2.0.0.1"
 #define RAKE_VERSION @"0.5.0"
-#define CLIENT_VERSION @"1.5"
+#define CLIENT_VERSION @"1.6"
 
 
 #ifndef IFT_ETHER
