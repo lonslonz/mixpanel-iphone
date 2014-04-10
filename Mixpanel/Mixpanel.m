@@ -432,9 +432,8 @@ static Mixpanel *sharedInstance = nil;
         
         
         NSMutableDictionary *p = [NSMutableDictionary dictionary];
-        [p addEntriesFromDictionary:[Mixpanel deviceInfoProperties]];
         
-        //[p addEntriesFromDictionary:self.superProperties];
+        [p addEntriesFromDictionary:self.superProperties];
         if (properties) {
             [p addEntriesFromDictionary:properties];
         }
@@ -442,6 +441,7 @@ static Mixpanel *sharedInstance = nil;
                            [dateFormatter stringFromDate:now], @"baseTime",
                            [localDateFormatter stringFromDate:now], @"localTime",
                            nil]];
+        [p addEntriesFromDictionary:[Mixpanel deviceInfoProperties]];
 
         [Mixpanel assertPropertyTypes:properties];
 
